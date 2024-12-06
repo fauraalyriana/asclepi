@@ -30,9 +30,9 @@ const inputError = require('../exceptions/inputError');
         if (response instanceof inputError) {
             const newResponse = h.response({
                 status: 'fail',
-                message: `${response.message} Silakan gunakan foto lain.`
+                message: 'Terjadi kesalahan dalam melakukan prediksi',
             });
-            newResponse.code(response.statusCode);
+            newResponse.code(400);
             return newResponse;
         }
     

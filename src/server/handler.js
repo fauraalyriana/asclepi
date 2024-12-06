@@ -1,6 +1,7 @@
 const predictClassification = require('../services/inferenceService');
 const crypto = require('crypto');
 const storeData = require('../services/storeData');
+const { Firestore } = require('@google-cloud/firestore');
 
 async function postPredictHandler(request, h) {
     const { image } = request.payload; 
@@ -29,30 +30,36 @@ async function postPredictHandler(request, h) {
     return response;
 } 
 
-let predictionHistory = [];  // Tempat menyimpan riwayat prediksi
+const firestore = new Firestore();
 
-// Fungsi untuk mendapatkan riwayat prediksi
-async function getPredictionHistory(request, h) {
+async function getPredictionHistoriesHandler(request, h) {
     try {
-        if (predictionHistory.length === 0) {
-            return h.response({
-                status: 'success',
-                message: 'Tidak ada riwayat prediksi',
-                data: []
-            }).code(200);
-        }
-
+      const snapshot = await firestore.collection('predictions').get();
+  
+      if (snapshot.empty) {
         return h.response({
-            status: 'success',
-            data: predictionHistory
+          status: 'success',
+          data: [],
         }).code(200);
+      }
+  
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        history: doc.data(),
+      }));
+  
+      return h.response({
+        status: 'success',
+        data,
+      }).code(200);
     } catch (error) {
-        return h.response({
-            status: 'fail',
-            message: 'Terjadi kesalahan dalam mengambil riwayat prediksi',
-        }).code(500);
+      console.error('Error fetching prediction histories:', error);
+      return h.response({
+        status: 'fail',
+        message: 'Terjadi kesalahan saat mengambil riwayat prediksi.',
+      }).code(500);
     }
-}
+  }
 
-module.exports = { postPredictHandler, getPredictionHistory };
+module.exports = { postPredictHandler, getPredictionHistoriesHandler };
 

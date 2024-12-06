@@ -23,7 +23,7 @@ async function predictClassification(model, image) {
 
         return { label, suggestion };
     } catch (error) {
-        throw new inputError('Terjadi kesalahan dalam melakukan prediksi.');
+        throw new inputError();
     }
 
 }

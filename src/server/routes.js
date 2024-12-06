@@ -1,5 +1,5 @@
 const postPredictHandler = require('../server/handler').postPredictHandler;
-const getPredictionHistory = require('../server/handler').getPredictionHistory;
+const getPredictionHistoriesHandler = require('../server/handler').getPredictionHistoriesHandler;
 
 const routes = [
   {
@@ -15,10 +15,10 @@ const routes = [
     }
   },
   {
-    path: '/predict/histories',
     method: 'GET',
-    handler: getPredictionHistory, 
-  }
+    path: '/predict/histories',
+    handler: getPredictionHistoriesHandler,
+},
 ];
 
 module.exports = routes;
